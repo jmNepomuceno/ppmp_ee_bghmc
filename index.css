@@ -1,0 +1,154 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body .left-container{
+    width: 60%;
+    height: 100vh;
+    background-image: linear-gradient(to right, #D84315 , #FF5722);
+
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body .left-container img{
+    width: 80%;
+    height: 80%;
+}
+
+body .right-container{
+    width: 40%;
+    height: 100vh;
+
+    background: #FFFEFE;
+    
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+body .right-container span{
+    font-size: 2rem;
+    font-weight: 600;
+    color: #BF360C;
+}
+
+body .right-container .credential-div{
+    width: 55%;
+    height: 50px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    border-radius: 10px;
+    background: #FFD8CC;
+}
+
+body .right-container .credential-div .credential-icon-div{
+    height: 100%;
+    width: 17%;
+    background: #FF764D;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body .right-container .credential-div .credential-icon-div i{
+    color:#666666;
+    font-size: 1.6rem;
+}
+
+body .right-container .credential-div .credential-inputs{
+    height: 100%;
+    width: 80%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left:3%;
+
+    outline: none;
+    border:none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    background: #FFD8CC;
+    font-weight: 300;
+    font-size: 1.2rem;
+}
+
+body .right-container #login-btn{
+    background: #D84315;
+    border:none;
+    border-radius: 20px;
+    width: 125px;
+    height: 40px;
+    color:white;
+    font-weight: 600;
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+#modal-notif .modal-content .modal-header{
+    width: 100%;
+    height: 50px;
+    background: #D84315;
+}
+
+#modal-notif .modal-content .modal-header h5{
+    color:white;
+    font-weight: 600;
+}
+
+
+#modal-notif .modal-content .modal-footer button{
+    background: #007bff;
+    border:none;
+    padding:7px;
+    color:white;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+@media only screen and (max-width: 480px){
+    body{
+        flex-direction: column;
+    }
+
+    body .left-container{
+        width: 100%;
+        height: 40vh;
+    }
+    
+    body .left-container img{
+        width: 100%;
+        height: 100%;
+    }
+    
+    body .right-container{
+        width: 100%;
+        height: 60vh;
+    }
+}
