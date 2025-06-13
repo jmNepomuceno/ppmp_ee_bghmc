@@ -39,7 +39,7 @@ if (isset($_POST["username"]) && isset($_POST["password"]) && trim($_POST["usern
             $_SESSION["role"] = "";
             $_SESSION["fetch_inventory"] = "";
 
-            $admin_bioID = [3374, 3858, 2514];
+            $admin_bioID = [3374, 3858, 2514, 4521];
 
             if(in_array($_SESSION["user"], $admin_bioID)){
                 $_SESSION["role"] = 'admin';

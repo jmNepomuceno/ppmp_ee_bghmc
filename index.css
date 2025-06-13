@@ -36,19 +36,60 @@ body .right-container{
     
     display:flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 20px;
 }
 
-body .right-container span{
+body .right-container .logo-imgs{
+    width: 100%;
+    height: 200px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom:50px;
+    margin-top:100px;
+}
+
+
+body .right-container .logo-imgs img{
+    height: 90%;
+    width: 200px;
+}
+
+body .right-container .logo-imgs img:nth-child(1){
+    height: 85%;
+    width: 190px;
+}
+
+
+body .right-container .login-div{
+    height: 50%;
+    width: 60%;
+    border-radius: 20px;
+    padding:5px;
+
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:20px;
+
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+
+body .right-container .login-div span{
     font-size: 2rem;
     font-weight: 600;
     color: #BF360C;
 }
 
-body .right-container .credential-div{
-    width: 55%;
+body .right-container .login-div .credential-div{
+    width: 75%;
     height: 50px;
 
     display:flex;
@@ -58,9 +99,10 @@ body .right-container .credential-div{
 
     border-radius: 10px;
     background: #FFD8CC;
+
 }
 
-body .right-container .credential-div .credential-icon-div{
+body .right-container .login-div .credential-div .credential-icon-div{
     height: 100%;
     width: 17%;
     background: #FF764D;
@@ -73,12 +115,12 @@ body .right-container .credential-div .credential-icon-div{
     align-items: center;
 }
 
-body .right-container .credential-div .credential-icon-div i{
+body .right-container .login-div .credential-div .credential-icon-div i{
     color:#666666;
     font-size: 1.6rem;
 }
 
-body .right-container .credential-div .credential-inputs{
+body .right-container .login-div .credential-div .credential-inputs{
     height: 100%;
     width: 80%;
     display:flex;
@@ -97,7 +139,7 @@ body .right-container .credential-div .credential-inputs{
     font-size: 1.2rem;
 }
 
-body .right-container #login-btn{
+body .right-container .login-div #login-btn{
     background: #D84315;
     border:none;
     border-radius: 20px;

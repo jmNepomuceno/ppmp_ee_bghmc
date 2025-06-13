@@ -2,8 +2,6 @@ let modal_placeorder = new bootstrap.Modal(document.getElementById('modal-place-
 let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
 // modal_placeorder.show()
 
-
-
 const dataTable = () =>{
     $.ajax({
         url: '../php/checkCurrentCart.php',

@@ -28,25 +28,33 @@
 
 
     <div class="right-container">
-        <span>USER LOGIN</span>
 
-        <div class="credential-div" id="username-div">
-            <div class="credential-icon-div">
-                <i class="fa-solid fa-user"></i>
-            </div>
-            <input type="text" class="credential-inputs" id="username-txt" placeholder="Username" autocomplete="off">
+        <div class="logo-imgs">
+            <img src="./source/landing_css/DOH Logo.png" alt="">
+            <img src="./source/landing_css/BGHMC logo hi-res.png" alt="">
+            <img src="./source/landing_css/Bagong_Pilipinas_logo.png" alt="">
         </div>
 
-        <div class="credential-div" id="password-div">
-            <div class="credential-icon-div">
-                <i class="fa-solid fa-lock"></i>
+        <div class="login-div">
+            <span>USER LOGIN</span>
+            <div class="credential-div" id="username-div">
+                <div class="credential-icon-div">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <input type="text" class="credential-inputs" id="username-txt" placeholder="Username" autocomplete="off">
             </div>
-            <input type="password" class="credential-inputs" id="password-txt" placeholder="Password" autocomplete="off">
+
+            <div class="credential-div" id="password-div">
+                <div class="credential-icon-div">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <input type="password" class="credential-inputs" id="password-txt" placeholder="Password" autocomplete="off">
+            </div>
+
+            <h6>No account yet? <a id="sign-up-a" href="http://192.168.42.10:8085/">Sign Up</a></h6>
+
+            <button id="login-btn">LOGIN</button> 
         </div>
-
-        <h6>No account yet? <a id="sign-up-a" href="http://192.168.42.10:8085/">Sign Up</a></h6>
-
-        <button id="login-btn">LOGIN</button>
     </div>
 
     <div class="modal fade" id="modal-notif" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
