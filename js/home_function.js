@@ -186,7 +186,6 @@ let paginationInstance = pagination();
 $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
-    
     $('.add-btn').click(function(){
         const index = $(this).index('.add-btn'); 
         let current_total = parseInt($('.current-total-span').eq(index).val()) + 1;

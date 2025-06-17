@@ -53,6 +53,39 @@
     background-color: #f1f1f1; 
 }
 
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex; /* Visible by default */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #98b39a;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+}
+
+#myProgress {
+    width: 500px; /* Adjust width as needed */
+    background-color: #ddd; /* Background color for the progress bar container */
+    border-radius: 8px;
+    overflow: hidden; /* To contain the progress bar within rounded corners */
+}
+
+#myBar {
+    width: 1px; /* Example starting width, change dynamically as needed */
+    height: 20px;
+    background-color: #a33310; /* Green progress bar */
+    border-radius: 8px; /* Optional rounded corners */
+    transition: width 0.3s ease; /* Smooth progress animation */
+}
+
 body{
     display:flex;
     flex-direction: row;
@@ -481,6 +514,14 @@ body .right-container .inventory-div .tiles-div .function-div button{
     border-radius: 5px;
     font-size: 0.9rem;
     font-weight: bold;
+}
+
+#modal-add-item .modal-content #modal-body-incoming #add-item-form{
+    /* border:1px solid red; */
+}
+
+#modal-add-item .modal-content #modal-body-incoming #image-preview-div{
+    display:none;
 }
 
 @media only screen and (max-width: 480px){

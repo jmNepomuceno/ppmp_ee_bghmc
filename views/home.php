@@ -8,18 +8,20 @@
         header("Location: ../views/home.php"); // Redirect unauthorized users
         exit();
     }
-    // print_r($_SESSION);
-    if($_SESSION['fetch_inventory'] == ""){
-        $sql = "SELECT * FROM imiss_inventory";
+
+    // Lightweight session caching — NO image
+    if (empty($_SESSION['fetch_inventory'])) {
+        $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility FROM imiss_inventory";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        for($i = 0; $i < count($item_data); $i++) {
+
+        for ($i = 0; $i < count($item_data); $i++) {
             if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 75) {
                 $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 75) . "...";
             }
         }
+
         $_SESSION['fetch_inventory'] = $item_data;
     }
 
@@ -74,27 +76,31 @@
 
         <div class="inventory-div">
             <?php for ($i = 0; $i < $total_items; $i++) { 
-                // Convert BLOB to base64
-                $itemImageData = $item_data[$i]['itemImage']; // Get the BLOB data
-                if (!empty($itemImageData)) {
-                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($itemImageData);
+                $item = $item_data[$i];
+
+                // Fetch itemImage separately by itemID
+                $stmt = $pdo->prepare("SELECT itemImage FROM imiss_inventory WHERE itemID = ?");
+                $stmt->execute([$item['itemID']]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!empty($result['itemImage'])) {
+                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($result['itemImage']);
                 } else {
-                    $imageSrc = '../source/inventory_image/item_1.png'; // Provide a default image path
+                    $imageSrc = '../source/inventory_image/item_1.png';
                 }
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
                     <img class="item-img" src="<?php echo $imageSrc; ?>" alt="item-1-img">
-                    
+
                     <p class="item-description">
-                        <?php echo $item_data[$i]['itemName']; ?> 
-                        <span style="display:none" class="item-id"><?php echo $item_data[$i]['itemID']; ?></span>
+                        <?php echo $item['itemName']; ?>
+                        <span style="display:none" class="item-id"><?php echo $item['itemID']; ?></span>
                     </p>
-                    <span class="item-price"><?php echo "P " . number_format($item_data[$i]['itemPrice'], 2, '.', ','); ?></span>
-                    
+                    <span class="item-price"><?php echo "P " . number_format($item['itemPrice'], 2, '.', ','); ?></span>
+
                     <div class="function-div">
                         <div class="add-div">
                             <button class="minus-btn">-</button>
-                            <!-- <span class="current-total-span">0</span> -->
                             <input type="text" class="current-total-span" value="0">
                             <button class="add-btn">+</button>
                         </div>
@@ -102,6 +108,7 @@
                     </div>
                 </div>
             <?php } ?>
+
 
             
         </div>

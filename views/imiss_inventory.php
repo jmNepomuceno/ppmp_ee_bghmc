@@ -55,37 +55,34 @@
 
         <div class="inventory-div">
             <?php for ($i = 0; $i < $total_items; $i++) { 
-                // Convert BLOB to base64
-                $itemImageData = $item_data[$i]['itemImage']; // Get the BLOB data
-                if (!empty($itemImageData)) {
-                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($itemImageData);
+                $item = $item_data[$i];
+
+                // Fetch itemImage by itemID
+                $stmt = $pdo->prepare("SELECT itemImage FROM imiss_inventory WHERE itemID = ?");
+                $stmt->execute([$item['itemID']]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!empty($result['itemImage'])) {
+                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($result['itemImage']);
                 } else {
-                    $imageSrc = '../source/inventory_image/item_1.png'; // Provide a default image path
+                    $imageSrc = '../source/inventory_image/item_1.png';
                 }
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
                     <img class="item-img" src="<?php echo $imageSrc; ?>" alt="item-1-img">
-                    
+
                     <p class="item-description">
-                        <?php echo $item_data[$i]['itemName']; ?> 
-                        <span style="display:none" class="item-id"><?php echo $item_data[$i]['itemID']; ?></span>
+                        <?php echo $item['itemName']; ?>
+                        <span style="display:none" class="item-id"><?php echo $item['itemID']; ?></span>
                     </p>
-                    <span class="item-price"><?php echo "P " . number_format($item_data[$i]['itemPrice'], 2, '.', ','); ?></span>
-                    
+                    <span class="item-price"><?php echo "P " . number_format($item['itemPrice'], 2, '.', ','); ?></span>
+
                     <div class="function-div">
-                        <!-- <div class="add-div">
-                            <button class="minus-btn">-</button>
-                            <input type="text" class="current-total-span" value="0">
-                            <button class="add-btn">+</button>
-                        </div>
-                        <button class="add-to-cart-btn">Add to Cart</button> -->
                         <button class="edit-item-btn">Edit</button>
                         <button class="delete-item-btn">Delete</button>
                     </div>
                 </div>
             <?php } ?>
-
-            
         </div>
 
 
@@ -115,7 +112,8 @@
                         <!-- Row 2: Image Upload -->
                         <div class="form-group mb-3">
                             <label for="item-image">Item Image</label>
-                            <input type="file" class="form-control" id="item-image" name="item_image" accept="image/*" required>
+                            <input type="file" class="form-control" id="item-image" name="item_image" accept="image/*">
+                            <img id="img-preview-display" src="../source/inventory_image/item_1.png" alt="Preview" style="max-height: 150px; margin-top: 10px; display: none;">
                         </div>
 
                         <!-- Row 3: Price -->
@@ -174,6 +172,14 @@
         </div>
     </div>
 
+    <!-- <div class="loading-overlay"> 
+        <span>Loading inventory...</span>
+        <div id="myProgress">
+            <div id="myBar"></div>
+        </div>
+    </div> -->
+
+
 
     <?php require "../links/script_links.php" ?>
     <script> 
@@ -182,6 +188,8 @@
         var itemsPerPage = <?php echo $items_per_page; ?>;
         var totalItems = <?php echo $total_items; ?>;
         var totalPages = <?php echo $total_pages; ?>;
+
+        var item_data = <?php echo json_encode($item_data); ?>;
     </script>
 
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>

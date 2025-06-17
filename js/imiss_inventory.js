@@ -1,5 +1,7 @@
 let modal_addItem = new bootstrap.Modal(document.getElementById('modal-add-item'));
 let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
+
+let click_itemId = 0;
 // var item_data = JSON.parse(document.getElementById('item-data').textContent);
 
 // $('#modal-add-item').on('hidden.bs.modal', function () {
@@ -163,10 +165,60 @@ const pagination = () => {
     return { showPage }; // Return function to use in search
 };
 
+
 let paginationInstance = pagination();
+
+
+// Progress bar logic
+const move = () => {
+    let elem = document.getElementById("myBar");
+    let width = 1;
+    progressInterval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(progressInterval);
+        } else {
+            width += 3;
+            elem.style.width = width + "%";
+        }
+    }, 60);
+};
+
+const whenAllTilesLoaded = (callback) => {
+    const images = document.querySelectorAll('.item-img');
+    let loadedCount = 0;
+    const totalImages = images.length;
+
+    if (totalImages === 0) return callback();
+
+    images.forEach((img) => {
+        if (img.complete) {
+            loadedCount++;
+            if (loadedCount === totalImages) callback();
+        } else {
+            img.onload = img.onerror = () => {
+                loadedCount++;
+                if (loadedCount === totalImages) callback();
+            };
+        }
+    });
+};
 
 $(document).ready(function(){
     // dataTable()
+    console.log(item_data)
+
+    // move(); // Start progress bar
+
+    // whenAllTilesLoaded(() => {
+    //     clearInterval(progressInterval);
+    //     $('#myBar').css('width', '1px');
+    //     $('.loading-overlay').fadeOut(); // Only fade out when images are really ready
+    // });
+
+    // // Safety: auto-hide loader after 5s in case image load fails
+    // setTimeout(() => {
+    //     $('.loading-overlay').fadeOut();
+    // }, 5000);
 
     $('#search-btn').on('click', function() {
         let searchInput = $('#search-input').val().toLowerCase();
@@ -210,6 +262,8 @@ $(document).ready(function(){
             paginationInstance.showPage(1);
         }
     })
+
+
     
     
 
@@ -217,11 +271,18 @@ $(document).ready(function(){
     $('#add-item-btn').click(function (event) {
         event.preventDefault();
 
+        const isEdit = $('#add-item-btn').text().trim() === 'EDIT ITEM';
         const form = $('#add-item-form')[0];
         const formData = new FormData(form);
+        const endpoint = isEdit ? '../php/updateItem_mng.php' : '../php/addNewItem_mng.php';
+        const successMessage = isEdit ? "Successfully Updated!" : "Successfully Added!";
+
+        if (isEdit) {
+            formData.append('item_id', click_itemId); // Ensure this is set globally
+        }
 
         $.ajax({
-            url: '../php/addNewItem_mng.php',
+            url: endpoint,
             method: 'POST',
             data: formData,
             processData: false,
@@ -229,12 +290,46 @@ $(document).ready(function(){
             dataType: 'json',
             success: function (response) {
                 console.log(response);
-                modal_addItem.hide()
+
+                if (response.status === 'success') {
+                    const updatedInventory = response.updated_inventory;
+
+                    // Clear old tiles
+                    $('.item-tile').remove();
+
+                    // Rebuild tiles
+                    updatedInventory.forEach((item, index) => {
+                        
+                        const formattedPrice = "P " + parseFloat(item.itemPrice).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                        const imageSrc = '../source/inventory_image/item_1.png'; // fallback only
+                        const itemHTML = `
+                            <div class="tiles-div item-tile" data-index="${index}">
+                                <img class="item-img" src="${imageSrc}" alt="item-img">
+                                <p class="item-description">
+                                    ${item.itemName}
+                                    <span style="display:none" class="item-id">${item.itemID}</span>
+                                </p>
+                                <span class="item-price">${formattedPrice}</span>
+                                <div class="function-div">
+                                    <button class="edit-item-btn">Edit</button>
+                                    <button class="delete-item-btn">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        $('.inventory-div').append(itemHTML); // make sure the selector matches
+                    });
+                }
+
+                modal_addItem.hide();
                 $('.modal-backdrop').remove(); 
                 $('body').removeClass('modal-open');
 
-                $('#modal-notif #modal-title-incoming').text("Order Request Sent.")
-                modal_notif.show()
+                $('#modal-notif #modal-title-incoming').text(successMessage);
+                modal_notif.show();
             },
             error: function (err) {
                 console.error("Error:", err);
@@ -244,26 +339,99 @@ $(document).ready(function(){
         });
     });
 
+
     $('#add-new-item-btn').click(function () {
         $('#modal-add-item .modal-title-incoming').text("New Item");
         $('#add-item-btn').text("ADD NEW ITEM");
         $('#add-item-form')[0].reset(); 
+
+        $('#img-preview-display').css('display' , 'none')
     });
 
-    $(document).off('click', '.edit-item-btn').on('click', '.edit-item-btn', function() {        
+    $('#add-item-form input, #add-item-form textarea').on('input change', function () {
+        checkIfFormChanged();
+    });
+
+    $('#item-image').on('change', function () {
+        checkIfFormChanged();
+    });
+
+    function checkIfFormChanged() {
+        let changed = false;
+
+        $('#add-item-form input[type="text"], #add-item-form input[type="number"], #add-item-form textarea').each(function () {
+            const original = $(this).attr('data-original');
+            const current = $(this).val();
+            if (original !== current) {
+                changed = true;
+            }
+        });
+
+        // Image comparison
+        const originalImg = $('#img-preview-display').attr('data-original');
+        const currentImg = $('#img-preview-display').attr('src');
+        if (originalImg !== currentImg) {
+            changed = true;
+        }
+
+        $('#add-item-btn').prop('disabled', !changed);
+        $('#add-item-btn').css('opacity', 1);
+
+    }
+
+    $(document).off('click', '.edit-item-btn').on('click', '.edit-item-btn', function () {
         const index = $('.edit-item-btn').index(this);
-        console.log(index)
-
+        const itemID = $('.item-id').eq(index).text().trim();
+        click_itemId = itemID
+        // Set form title
         $('#modal-add-item .modal-title-incoming').text("Edit Item");
-        // console.log(item_data)
-        // $('#item-id').val(existingItem.id);
-        // $('#item-name').val(existingItem.name);
-        // $('#item-price').val(existingItem.price);
-        // $('#item-specs').val(existingItem.specs);
+
+        // Fetch item data including image via AJAX
+        $.ajax({
+            url: '../php/fetch_singleImage.php', // Replace with your endpoint
+            method: 'POST',
+            data: { item_id: itemID },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    const item = response.data;
+
+                    // Populate fields
+                    $('#item-name').val(item.itemName);
+                    $('#item-price').val(item.itemPrice);
+                    $('#item-specs').val(item.itemSpecs);
+
+                    // Show image preview
+                    if (item.itemImage) {
+                        $('#img-preview-display').attr('src', item.itemImage).show();
+                    } else {
+                        $('#img-preview-display').attr('src', '../source/inventory_image/item_1.png').show();
+                    }
+
+                    // Populate fields with original values and store them for comparison
+                    $('#item-name').val(item.itemName).attr('data-original', item.itemName);
+                    $('#item-price').val(item.itemPrice).attr('data-original', item.itemPrice);
+                    $('#item-specs').val(item.itemSpecs).attr('data-original', item.itemSpecs);
+
+                    // Track original image for comparison
+                    $('#img-preview-display')
+                        .attr('src', item.itemImage || '../source/inventory_image/item_1.png')
+                        .attr('data-original', item.itemImage || '../source/inventory_image/item_1.png');
+
+                    $('#add-item-btn').prop('disabled', true);
+                    $('#add-item-btn').css('opacity', 0.5);
 
 
-        modal_addItem.show()
-        
+                    // Show the modal
+                    $('#add-item-btn').text("EDIT ITEM")
+                    modal_addItem.show();
+                }
+            },
+            error: function () {
+                alert("Failed to fetch item details.");
+            }
+        });
     });
+
 
 })
