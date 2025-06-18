@@ -11,7 +11,7 @@
 
     // Lightweight session caching — NO image
     if (empty($_SESSION['fetch_inventory'])) {
-        $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility FROM imiss_inventory";
+        $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -26,6 +26,7 @@
     }
 
     $item_data = $_SESSION['fetch_inventory'];
+
 ?>
 
 <!DOCTYPE html>
@@ -67,9 +68,8 @@
             </div>
             
             <div class="cart-div">
-                <img id="item-img-animation" src="../source/inventory_image/item_1.png" alt="item-1-img">
+                <img id="item-img-animation" src="../source/inventory_image/item_1.jpg" alt="item-1-img">
                 <span id="notif-value"></span>
-                <!-- <img id="cart-icon" src="../source/home_css/cart.png" alt="cart-icon" data-bs-toggle="modal" data-bs-target="#modal-place-order"> -->
                 <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
             </div>
         </div>
@@ -78,20 +78,12 @@
             <?php for ($i = 0; $i < $total_items; $i++) { 
                 $item = $item_data[$i];
 
-                // Fetch itemImage separately by itemID
-                $stmt = $pdo->prepare("SELECT itemImage FROM imiss_inventory WHERE itemID = ?");
-                $stmt->execute([$item['itemID']]);
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!empty($result['itemImage'])) {
-                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($result['itemImage']);
-                } else {
-                    $imageSrc = '../source/inventory_image/item_1.png';
-                }
+                // Use the stored path from the database
+                $imageSrc = $item['itemImagePath'];
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
-                    <img class="item-img" src="<?php echo $imageSrc; ?>" alt="item-1-img">
-
+                    <img class="item-img" src="../<?php echo $imageSrc; ?>" 
+                        alt="item-<?php echo $item['itemID']; ?>-img">
                     <p class="item-description">
                         <?php echo $item['itemName']; ?>
                         <span style="display:none" class="item-id"><?php echo $item['itemID']; ?></span>
@@ -109,8 +101,6 @@
                 </div>
             <?php } ?>
 
-
-            
         </div>
 
 

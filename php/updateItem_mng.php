@@ -35,7 +35,7 @@
     }
 
     // ✅ Update session
-    $fetchStmt = $pdo->query("SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility FROM imiss_inventory WHERE itemVisibility = 'true'");
+    $fetchStmt = $pdo->query("SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory");
     $item_data = $fetchStmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Optional: match truncation logic for display

@@ -57,19 +57,11 @@
             <?php for ($i = 0; $i < $total_items; $i++) { 
                 $item = $item_data[$i];
 
-                // Fetch itemImage by itemID
-                $stmt = $pdo->prepare("SELECT itemImage FROM imiss_inventory WHERE itemID = ?");
-                $stmt->execute([$item['itemID']]);
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                if (!empty($result['itemImage'])) {
-                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($result['itemImage']);
-                } else {
-                    $imageSrc = '../source/inventory_image/item_1.png';
-                }
+                // Build image path from itemID
+                $imageSrc = $item['itemImagePath'];
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
-                    <img class="item-img" src="<?php echo $imageSrc; ?>" alt="item-1-img">
+                    <img class="item-img" src="../<?php echo $imageSrc; ?>" alt="item-<?php echo $item['itemID']; ?>-img">
 
                     <p class="item-description">
                         <?php echo $item['itemName']; ?>
@@ -166,7 +158,9 @@
                     
                 </div>
                 <div class="modal-footer">
-                    <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
+                    <button id="close-modal-btn-notif" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
+                    <button id="yes-modal-btn-notif" type="button" type="button" >YES</button>
+
                 </div>
             </div>
         </div>

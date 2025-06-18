@@ -516,6 +516,10 @@ body .right-container .inventory-div .tiles-div .function-div button{
     font-weight: bold;
 }
 
+#modal-notif .modal-content .modal-footer #yes-modal-btn-notif{
+    display:none;
+}
+
 #modal-add-item .modal-content #modal-body-incoming #add-item-form{
     /* border:1px solid red; */
 }

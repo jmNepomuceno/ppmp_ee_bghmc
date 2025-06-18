@@ -168,57 +168,9 @@ const pagination = () => {
 
 let paginationInstance = pagination();
 
-
-// Progress bar logic
-const move = () => {
-    let elem = document.getElementById("myBar");
-    let width = 1;
-    progressInterval = setInterval(() => {
-        if (width >= 100) {
-            clearInterval(progressInterval);
-        } else {
-            width += 3;
-            elem.style.width = width + "%";
-        }
-    }, 60);
-};
-
-const whenAllTilesLoaded = (callback) => {
-    const images = document.querySelectorAll('.item-img');
-    let loadedCount = 0;
-    const totalImages = images.length;
-
-    if (totalImages === 0) return callback();
-
-    images.forEach((img) => {
-        if (img.complete) {
-            loadedCount++;
-            if (loadedCount === totalImages) callback();
-        } else {
-            img.onload = img.onerror = () => {
-                loadedCount++;
-                if (loadedCount === totalImages) callback();
-            };
-        }
-    });
-};
-
 $(document).ready(function(){
     // dataTable()
     console.log(item_data)
-
-    // move(); // Start progress bar
-
-    // whenAllTilesLoaded(() => {
-    //     clearInterval(progressInterval);
-    //     $('#myBar').css('width', '1px');
-    //     $('.loading-overlay').fadeOut(); // Only fade out when images are really ready
-    // });
-
-    // // Safety: auto-hide loader after 5s in case image load fails
-    // setTimeout(() => {
-    //     $('.loading-overlay').fadeOut();
-    // }, 5000);
 
     $('#search-btn').on('click', function() {
         let searchInput = $('#search-input').val().toLowerCase();
@@ -263,10 +215,6 @@ $(document).ready(function(){
         }
     })
 
-
-    
-    
-
     // AJAX Submit on Add button
     $('#add-item-btn').click(function (event) {
         event.preventDefault();
@@ -282,61 +230,71 @@ $(document).ready(function(){
         }
 
         $.ajax({
-            url: endpoint,
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function (response) {
-                console.log(response);
+    url: endpoint,
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: 'json',
+    success: function (response) {
+        console.log(response);
 
-                if (response.status === 'success') {
-                    const updatedInventory = response.updated_inventory;
+        if (response.status === 'success') {
+            const updatedInventory = response.updated_inventory;
 
-                    // Clear old tiles
-                    $('.item-tile').remove();
+            // Clear old tiles
+            $('.item-tile').remove();
 
-                    // Rebuild tiles
-                    updatedInventory.forEach((item, index) => {
-                        
-                        const formattedPrice = "P " + parseFloat(item.itemPrice).toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
+            // Rebuild tiles
+            updatedInventory.forEach((item, index) => {
+                const formattedPrice = "P " + parseFloat(item.itemPrice).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
 
-                        const imageSrc = '../source/inventory_image/item_1.png'; // fallback only
-                        const itemHTML = `
-                            <div class="tiles-div item-tile" data-index="${index}">
-                                <img class="item-img" src="${imageSrc}" alt="item-img">
-                                <p class="item-description">
-                                    ${item.itemName}
-                                    <span style="display:none" class="item-id">${item.itemID}</span>
-                                </p>
-                                <span class="item-price">${formattedPrice}</span>
-                                <div class="function-div">
-                                    <button class="edit-item-btn">Edit</button>
-                                    <button class="delete-item-btn">Delete</button>
-                                </div>
-                            </div>
-                        `;
-                        $('.inventory-div').append(itemHTML); // make sure the selector matches
-                    });
-                }
+                // Point to the image, fallback to default if image doesn't exist
+                const imageSrc = item.itemImagePath && item.itemImagePath.trim() !== ''
+                                ? `../${item.itemImagePath}`
+                                : '../source/inventory_image/default.jpg';
+                // const imageSrc = '../source/inventory_image/default.jpg';
 
-                modal_addItem.hide();
-                $('.modal-backdrop').remove(); 
-                $('body').removeClass('modal-open');
+                console.log(imageSrc)
+                const itemHTML = `
+                    <div class="tiles-div item-tile" data-index="${index}">
+                        <img class="item-img" 
+                             src="${imageSrc}" 
+                             alt="item-img" />
+                        <p class="item-description">
+                            ${item.itemName}
+                            <span style="display:none" class="item-id">${item.itemID}</span>
+                        </p>
+                        <span class="item-price">${formattedPrice}</span>
+                        <div class="function-div">
+                            <button class="edit-item-btn">Edit</button>
+                            <button class="delete-item-btn">Delete</button>
+                        </div>
+                    </div>
+                `;
 
-                $('#modal-notif #modal-title-incoming').text(successMessage);
-                modal_notif.show();
-            },
-            error: function (err) {
-                console.error("Error:", err);
-                $('#modal-notif #modal-title-incoming').text("Something went wrong.");
-                modalAddItem.hide(); // still hide so we show notif
-            }
-        });
+                $('.inventory-div').append(itemHTML);
+            });
+        }
+
+        modal_addItem.hide();
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+
+        $('#modal-notif #modal-title-incoming').text(successMessage);
+        modal_notif.show();
+    },
+    error: function (err) {
+        console.error("Error:", err);
+        $('#modal-notif #modal-title-incoming').text("Something went wrong.");
+        modalAddItem.hide(); // still hide so we show notif
+    }
+});
+
+
     });
 
 
@@ -402,10 +360,10 @@ $(document).ready(function(){
                     $('#item-specs').val(item.itemSpecs);
 
                     // Show image preview
-                    if (item.itemImage) {
-                        $('#img-preview-display').attr('src', item.itemImage).show();
+                    if (item.itemImagePath) {
+                        $('#img-preview-display').attr('src', '../' + item.itemImagePath).show();
                     } else {
-                        $('#img-preview-display').attr('src', '../source/inventory_image/item_1.png').show();
+                        $('#img-preview-display').attr('src', '../source/inventory_image/default.jpg').show();
                     }
 
                     // Populate fields with original values and store them for comparison
@@ -415,14 +373,14 @@ $(document).ready(function(){
 
                     // Track original image for comparison
                     $('#img-preview-display')
-                        .attr('src', item.itemImage || '../source/inventory_image/item_1.png')
-                        .attr('data-original', item.itemImage || '../source/inventory_image/item_1.png');
+                        .attr('src', '../' + item.itemImagePath || '../source/inventory_image/default.jpg')
+                        .attr('data-original', '../' +  item.itemImagePath || '../source/inventory_image/default.jpg');
 
                     $('#add-item-btn').prop('disabled', true);
                     $('#add-item-btn').css('opacity', 0.5);
 
 
-                    // Show the modal
+                    // // Show the modal
                     $('#add-item-btn').text("EDIT ITEM")
                     modal_addItem.show();
                 }
@@ -434,4 +392,52 @@ $(document).ready(function(){
     });
 
 
+    $(document).off('click', '.delete-item-btn').on('click', '.delete-item-btn', function () {
+        const index = $('.delete-item-btn').index(this);
+        const itemID = $('.item-id').eq(index).text().trim();
+
+        if (!itemID) return;
+
+        // Store the values on the Yes button
+        $('#yes-modal-btn-notif').data('item-id', itemID);
+        $('#yes-modal-btn-notif').data('item-index', index);
+
+        // Update modal
+        $('#modal-notif #modal-title-incoming').text("Are you sure you want to delete this item?");
+        $('#modal-notif #yes-modal-btn-notif').css('display', 'block');
+        $('#modal-notif #close-modal-btn-notif').text("No");
+
+        modal_notif.show();
+    });
+
+    $(document).off('click', '#yes-modal-btn-notif').on('click', '#yes-modal-btn-notif', function () {
+       $(document).off('click', '#yes-modal-btn-notif').on('click', '#yes-modal-btn-notif', function () {
+        const itemID = $(this).data('item-id');
+        const index = $(this).data('item-index');
+
+        $.ajax({
+            url: '../php/deleteItem_mng.php',
+            type: 'POST',
+            data: { itemID: itemID },
+            success: function (response) {
+                try {
+                    const res = JSON.parse(response);
+                    if (res.status === 'success') {
+                        $('.item-tile').eq(index).remove();
+                        modal_notif.hide();
+                    } else {
+                        alert('Delete failed: ' + res.message);
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON:', response);
+                    alert('Unexpected error.');
+                }
+            },
+            error: function () {
+                alert('Error deleting item. Please try again.');
+            }
+        });
+    });
+
+    })
 })

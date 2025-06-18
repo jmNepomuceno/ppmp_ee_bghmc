@@ -269,7 +269,7 @@ $(document).ready(function(){
     
     $('.add-to-cart-btn').click(function(){
         const index = $(this).index('.add-to-cart-btn'); 
-
+        
         $('#cart-icon').css('border-radius' , '5px')
         $('#cart-icon').css('width' , '150px')
         $('#item-img-animation').css('display' , 'block')
