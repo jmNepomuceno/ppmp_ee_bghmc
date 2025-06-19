@@ -70,4 +70,35 @@ $(document).ready(function(){
         }
     });
 
+    $(document).on('click', '.view-specs-btn', function () {
+        const itemName = $(this).data('item-name');
+        const itemPrice = $(this).data('item-price');
+        const itemImage = $(this).data('item-image');
+        const specs = $(this).data('item-specs');
+
+        console.log(specs)
+
+        $('#specs-item-name').text(itemName);
+        $('#specs-item-price').text("P " + itemPrice);
+        $('#specs-item-img').attr('src', itemImage);
+
+        let specsHtml = '';
+
+        try {
+            if (specs && typeof specs === 'object') {
+                for (const [key, value] of Object.entries(specs)) {
+                    specsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+                }
+            } else {
+                specsHtml = "<p>No specifications provided.</p>";
+            }
+        } catch (e) {
+            specsHtml = "<p>Invalid specs format.</p>";
+        }
+
+        $('#specs-list').html(specsHtml);
+
+        const modal = new bootstrap.Modal(document.getElementById('specsModal'));
+        modal.show();
+    });
 })

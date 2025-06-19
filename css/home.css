@@ -370,14 +370,12 @@ body .right-container .inventory-div .tiles-div{
     border-radius: 5px;
     /* box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px 0px; */
     box-shadow: 3px -3px 5px rgba(0, 0, 0, 0.2);
-
-    position:relative;
 }
 
 body .right-container .inventory-div .tiles-div img{
     width:90%;
     height: 150px;
-    margin-top:10px;
+    margin-top:5px;
     background: #D9D9D9;
     mix-blend-mode: multiply;
 }
@@ -389,7 +387,7 @@ body .right-container .inventory-div .tiles-div .item-description{
     height:auto;
     max-height: 90px;
     /* border:1px solid red; */
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: center;
     font-weight: 900;
 
@@ -398,6 +396,21 @@ body .right-container .inventory-div .tiles-div .item-description{
     justify-content: center;
     align-items: center;
     text-decoration:underline;
+}
+
+body .right-container .inventory-div .tiles-div .item-specs{
+    background: #6c757d;
+    opacity: 0.7;
+    padding: 2px 10px 2px 10px;
+    border-radius: 5px;
+    color:white;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top:-20px;
+}
+
+body .right-container .inventory-div .tiles-div .item-specs:hover{
+    opacity: 1;
 }
 
 body .right-container .inventory-div .tiles-div .item-price{
@@ -526,7 +539,8 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
 
 #modal-place-order .modal-content .modal-header,
 #modal-notif .modal-content .modal-header,
-#modal-logout .modal-content .modal-header{
+#modal-logout .modal-content .modal-header,
+#specsModal .modal-content .modal-header{
     width: 100%;
     height: 50px;
     background: #D84315;
@@ -534,7 +548,8 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
 
 #modal-place-order .modal-content .modal-header h5,
 #modal-notif .modal-content .modal-header h5,
-#modal-logout .modal-content .modal-header h5{
+#modal-logout .modal-content .modal-header h5,
+#specsModal .modal-content .modal-header h5{
     color:white;
     font-weight: 600;
 }

@@ -469,7 +469,7 @@ $(document).ready(function(){
                 }
             });
 
-            if(instance === 170){
+            if(instance === $('.tiles-div').length){
                 $('#modal-notif #modal-title-incoming').text("No item found.")
                 modal_notif.show()
             }

@@ -10,23 +10,29 @@
     }
 
     // Lightweight session caching — NO image
-    if (empty($_SESSION['fetch_inventory'])) {
-        $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // if (empty($_SESSION['fetch_inventory'])) {
+        
+    // }
 
-        for ($i = 0; $i < count($item_data); $i++) {
-            if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 75) {
-                $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 75) . "...";
-            }
+    $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo "<pre>"; print_r($item_data); echo "</pre>";
+    // echo print_r($item_data);
+    
+
+    for ($i = 0; $i < count($item_data); $i++) {
+        if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 65) {
+            // Store full name in a new key for tooltip
+            $item_data[$i]['itemName_full'] = $item_data[$i]['itemName'];
+            $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 65) . "...";
+        } else {
+            $item_data[$i]['itemName_full'] = $item_data[$i]['itemName'];
         }
-
-        $_SESSION['fetch_inventory'] = $item_data;
     }
 
-    $item_data = $_SESSION['fetch_inventory'];
-
+    $_SESSION['fetch_inventory'] = $item_data;
 ?>
 
 <!DOCTYPE html>
@@ -80,14 +86,36 @@
 
                 // Use the stored path from the database
                 $imageSrc = $item['itemImagePath'];
+
+                $dataSpecs = !empty($item['itemSpecs']) 
+                    ? htmlspecialchars(json_encode(json_decode($item['itemSpecs'], true)), ENT_QUOTES)
+                    : htmlspecialchars(json_encode([]), ENT_QUOTES);
+
+                // echo "<pre>"; print_r($item['itemSpecs']); echo "</pre>";
+                // echo "<pre>"; print_r($dataSpecs); echo "</pre>";
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
                     <img class="item-img" src="../<?php echo $imageSrc; ?>" 
                         alt="item-<?php echo $item['itemID']; ?>-img">
-                    <p class="item-description">
-                        <?php echo $item['itemName']; ?>
+                    <p class="item-description" title="<?php echo htmlspecialchars($item['itemName_full'], ENT_QUOTES); ?>">
+                        <?php
+                            $displayName = strlen($item['itemName']) > 65
+                                ? substr($item['itemName'], 0, 65) . "..."
+                                : $item['itemName'];
+                            echo $displayName;
+                        ?>
                         <span style="display:none" class="item-id"><?php echo $item['itemID']; ?></span>
                     </p>
+                    <span 
+                        class="item-specs view-specs-btn" 
+                        data-item-name="<?php echo htmlspecialchars($item['itemName'], ENT_QUOTES); ?>"
+                        data-item-price="<?php echo number_format($item['itemPrice'], 2); ?>"
+                        data-item-image="../<?php echo $imageSrc; ?>"
+                        data-item-specs="<?php echo $dataSpecs; ?>"';
+                    >
+                        View Specs
+                    </span>
+
                     <span class="item-price"><?php echo "P " . number_format($item['itemPrice'], 2, '.', ','); ?></span>
 
                     <div class="function-div">
@@ -168,6 +196,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="specsModal" tabindex="-1" aria-labelledby="specsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="specsModalLabel">Item Specifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="text-center mb-3">
+                        <img id="specs-item-img" src="" alt="Item Image" style="max-height: 200px;">
+                    </div>
+
+                    <h5 id="specs-item-name" style="font-weight:600; font-size:1.5rem;"></h5>
+                    <p><strong>Price:</strong> <span id="specs-item-price"></span></p>
+
+                    <hr>
+                    <div id="specs-list">
+                        <!-- Dynamically filled -->
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <?php require "../links/script_links.php" ?>

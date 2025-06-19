@@ -71,6 +71,35 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$_SESSION["user"]]);
 
+    // insert request history
+    $historyID = "";
+    $sql = "SELECT historyID FROM request_history ORDER BY historyID DESC LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $last_id = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($last_id && isset($last_id['historyID'])) {
+        // Extract numeric part (assuming format ORDER00002)
+        $num = (int) substr($last_id['historyID'], 5); // Get '00002' and convert to int (2)
+        $new_num = str_pad($num + 1, 5, "0", STR_PAD_LEFT); // Increment and pad to 5 digits
+        $historyID = "HSTRY" . $new_num; // Concatenate with 'ORDER'
+    } else {
+        $historyID = "HSTRY00001"; // Default if no record exists
+    }
+
+    // $edit_by = ($_SESSION['role'] == 'admin') ? 'admin' : ;
+    $sql = "INSERT INTO request_history (historyID, orderID, previousOrder, updatedOrder, dateEdited, edit_by) 
+    VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $historyID,
+        $orderID,
+        null,
+        json_encode($fetch_cart['cart']),
+        $date,
+        $_SESSION['user']
+    ]);
+
     
     $client = new Client("ws://192.168.42.222:8081");
     $client->send(json_encode(["action" => "refreshIncomingOrder"]));
