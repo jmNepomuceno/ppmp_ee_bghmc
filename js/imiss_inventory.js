@@ -226,76 +226,84 @@ $(document).ready(function(){
         const successMessage = isEdit ? "Successfully Updated!" : "Successfully Added!";
 
         if (isEdit) {
-            formData.append('item_id', click_itemId); // Ensure this is set globally
+            formData.append('item_id', click_itemId); // set globally from edit button
         }
+
+        // ✅ Extract key-value specifications
+        const specs = {};
+        $('.spec-row').each(function () {
+            const key = $(this).find('.spec-key').val().trim();
+            const value = $(this).find('.spec-value').val().trim();
+            if (key && value) {
+                specs[key] = value;
+            }
+        });
+
+
+        // ✅ Convert to JSON and append to form data
+        formData.set('item_specs', JSON.stringify(specs));
 
         $.ajax({
-    url: endpoint,
-    method: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: 'json',
-    success: function (response) {
-        console.log(response);
+            url: endpoint,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
 
-        if (response.status === 'success') {
-            const updatedInventory = response.updated_inventory;
+                if (response.status === 'success') {
+                    const updatedInventory = response.updated_inventory;
 
-            // Clear old tiles
-            $('.item-tile').remove();
+                    $('.item-tile').remove(); // clear old
 
-            // Rebuild tiles
-            updatedInventory.forEach((item, index) => {
-                const formattedPrice = "P " + parseFloat(item.itemPrice).toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
+                    updatedInventory.forEach((item, index) => {
+                        const formattedPrice = "P " + parseFloat(item.itemPrice).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
 
-                // Point to the image, fallback to default if image doesn't exist
-                const imageSrc = item.itemImagePath && item.itemImagePath.trim() !== ''
-                                ? `../${item.itemImagePath}`
-                                : '../source/inventory_image/default.jpg';
-                // const imageSrc = '../source/inventory_image/default.jpg';
+                        const imageSrc = item.itemImagePath && item.itemImagePath.trim() !== ''
+                            ? `../${item.itemImagePath}`
+                            : '../source/inventory_image/default.jpg';
 
-                console.log(imageSrc)
-                const itemHTML = `
-                    <div class="tiles-div item-tile" data-index="${index}">
-                        <img class="item-img" 
-                             src="${imageSrc}" 
-                             alt="item-img" />
-                        <p class="item-description">
-                            ${item.itemName}
-                            <span style="display:none" class="item-id">${item.itemID}</span>
-                        </p>
-                        <span class="item-price">${formattedPrice}</span>
-                        <div class="function-div">
-                            <button class="edit-item-btn">Edit</button>
-                            <button class="delete-item-btn">Delete</button>
-                        </div>
-                    </div>
-                `;
+                        const itemHTML = `
+                            <div class="tiles-div item-tile" data-index="${index}">
+                                <img class="item-img" src="${imageSrc}" alt="item-img" />
+                                <p class="item-description">
+                                    ${item.itemName}
+                                    <span style="display:none" class="item-id">${item.itemID}</span>
+                                </p>
+                                <span class="item-price">${formattedPrice}</span>
+                                <div class="function-div">
+                                    <button class="edit-item-btn">Edit</button>
+                                    <button class="delete-item-btn">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        $('.inventory-div').append(itemHTML);
+                    });
 
-                $('.inventory-div').append(itemHTML);
-            });
-        }
+                    $('.spec-key').val("")
+                    $('.spec-value').val("")
+                }
 
-        modal_addItem.hide();
-        $('.modal-backdrop').remove();
-        $('body').removeClass('modal-open');
+                modal_addItem.hide();
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
 
-        $('#modal-notif #modal-title-incoming').text(successMessage);
-        modal_notif.show();
-    },
-    error: function (err) {
-        console.error("Error:", err);
-        $('#modal-notif #modal-title-incoming').text("Something went wrong.");
-        modalAddItem.hide(); // still hide so we show notif
-    }
-});
-
-
+                $('#modal-notif #modal-title-incoming').text(successMessage);
+                modal_notif.show();
+            },
+            error: function (err) {
+                console.error("Error:", err);
+                $('#modal-notif #modal-title-incoming').text("Something went wrong.");
+                modal_addItem.hide();
+            }
+        });
     });
+
 
 
     $('#add-new-item-btn').click(function () {
@@ -369,7 +377,24 @@ $(document).ready(function(){
                     // Populate fields with original values and store them for comparison
                     $('#item-name').val(item.itemName).attr('data-original', item.itemName);
                     $('#item-price').val(item.itemPrice).attr('data-original', item.itemPrice);
-                    $('#item-specs').val(item.itemSpecs).attr('data-original', item.itemSpecs);
+                    $('.spec-container').empty(); // Make sure your spec rows are inside a wrapper like <div class="spec-container">
+                    
+                    try {
+                        const specs = JSON.parse(item.itemSpecs);
+                        if (typeof specs === 'object' && specs !== null) {
+                            Object.entries(specs).forEach(([key, value]) => {
+                                const specRowHTML = `
+                                    <div class="spec-row d-flex mb-2">
+                                        <input type="text" class="form-control me-2 spec-key" value="${key}" placeholder="Spec Key">
+                                        <input type="text" class="form-control spec-value" value="${value}" placeholder="Spec Value">
+                                        <button type="button" class="btn btn-danger remove-spec">×</button>
+                                    </div>`;
+                                $('.spec-container').append(specRowHTML);
+                            });
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse itemSpecs JSON", e);
+                    }
 
                     // Track original image for comparison
                     $('#img-preview-display')
@@ -440,4 +465,21 @@ $(document).ready(function(){
     });
 
     })
+
+    $('#add-spec').click(function () {
+        $('#item-specs-container').append(`
+            <div class="spec-row input-group mb-2">
+                <input type="text" class="form-control spec-key" placeholder="e.g., RAM">
+                <input type="text" class="form-control spec-value" placeholder="e.g., 16GB DDR4">
+                <button type="button" class="btn btn-danger remove-spec">×</button>
+            </div>
+        `);
+    });
+
+    $(document).on('click', '.remove-spec', function () {
+        $(this).closest('.spec-row').remove();
+        checkIfFormChanged()
+    });
+
+
 })

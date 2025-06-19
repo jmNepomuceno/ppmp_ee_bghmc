@@ -269,7 +269,8 @@ $(document).ready(function(){
     
     $('.add-to-cart-btn').click(function(){
         const index = $(this).index('.add-to-cart-btn'); 
-        
+        const itemID = parseInt($('.item-id').eq(index).text());
+
         $('#cart-icon').css('border-radius' , '5px')
         $('#cart-icon').css('width' , '150px')
         $('#item-img-animation').css('display' , 'block')
@@ -286,11 +287,8 @@ $(document).ready(function(){
                 }, 300);
         }, 1000);
 
-        $('#item-img-animation').attr('src' , $('.item-img').eq(index).attr('src'))
-
-        // Apply the function to your image
-        // let image = document.getElementById("item-img-animation");
-        // removeWhiteBackground(image);
+        // $('#item-img-animation').attr('src' , $('.item-img').eq(index).attr('src'))
+        $('#item-img-animation').attr('src' , `../source/inventory_image/item_${itemID}.jpg`)
 
         let data = []
 

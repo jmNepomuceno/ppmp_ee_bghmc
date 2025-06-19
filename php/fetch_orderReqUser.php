@@ -35,7 +35,7 @@ try {
 
         // Fetch request history
         // 3374, 3858, 2514
-        $sql = "SELECT * FROM request_history WHERE orderID=? AND (edit_by=3374 OR edit_by=3858 OR edit_by=2514)";
+        $sql = "SELECT * FROM request_history WHERE orderID=? AND (edit_by=3374 OR edit_by=3858 OR edit_by=2514 OR edit_by=4521 OR edit_by=1605)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$data[$i]['orderID']]);
         $history_orderID = $stmt->fetchAll(PDO::FETCH_ASSOC);

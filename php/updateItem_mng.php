@@ -15,6 +15,11 @@
     }
 
     // Handle optional image update
+    if (!empty($itemSpecs) && json_decode($itemSpecs) === null) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid JSON in item specifications']);
+        exit;
+    }
+    
     $imageProvided = (isset($_FILES['item_image']) && $_FILES['item_image']['error'] === UPLOAD_ERR_OK);
     if ($imageProvided) {
         $itemImageContent = file_get_contents($_FILES['item_image']['tmp_name']);

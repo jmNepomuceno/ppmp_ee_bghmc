@@ -105,7 +105,7 @@
                         <div class="form-group mb-3">
                             <label for="item-image">Item Image</label>
                             <input type="file" class="form-control" id="item-image" name="item_image" accept="image/*">
-                            <img id="img-preview-display" src="../source/inventory_image/item_1.png" alt="Preview" style="max-height: 150px; margin-top: 10px; display: none;">
+                            <img id="img-preview-display" src="" alt="Preview" style="max-height: 150px; margin-top: 10px; display: none;">
                         </div>
 
                         <!-- Row 3: Price -->
@@ -115,27 +115,24 @@
                         </div>
 
                         <!-- Row 4: Specifications -->
-                        <div class="form-group mb-3">
+                        <!-- <div class="form-group mb-3">
                             <label for="item-specs">Item Specifications <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="item-specs" name="item_specs" rows="5" placeholder="e.g., Processor: Intel i5, RAM: 8GB, Storage: 512GB SSD" required></textarea>
-                        </div>
-
-                        <!-- Row 6: Justification -->
-                        <!-- Row 5: Optional Fields --> 
-                        <!-- <div class="form-group mb-3">
-                            <label for="item-unit">Unit</label>
-                            <select class="form-control" id="item-unit" name="item_unit">
-                                <option value="">Select Unit</option>
-                                <option value="pc">pc</option>
-                                <option value="set">set</option>
-                                <option value="box">box</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="item-justification">Justification / Purpose</label>
-                            <textarea class="form-control" id="item-justification" name="item_justification" rows="3" placeholder="Why is this item needed?"></textarea>
                         </div> -->
+
+                        <div id="item-specs-container">
+                            <label class="form-label">Item Specifications <span class="text-danger">*</span></label>
+                            
+                            <div class="spec-row input-group mb-2">
+                                <input type="text" class="form-control spec-key" placeholder="e.g., Processor">
+                                <input type="text" class="form-control spec-value" placeholder="e.g., AMD Ryzen 9">
+                                <button type="button" class="btn btn-danger remove-spec">×</button>
+                            </div>
+                        </div>
+
+                        <div class="spec-container"></div>
+                        <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-spec">Add Specification</button>
+
                     </form>
                 </div>
 

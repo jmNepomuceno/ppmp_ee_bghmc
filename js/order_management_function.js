@@ -23,6 +23,7 @@ const dataTable = (filter) =>{
             },
             dataType : "json",
             success: function(response) {
+                console.log(response)
                 try {
                     let dataSet = [];
                     
