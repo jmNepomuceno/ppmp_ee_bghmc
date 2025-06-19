@@ -189,7 +189,7 @@ $(document).ready(function(){
                 }
             });
 
-            if(instance === 171){
+            if(instance === $('.tiles-div').length){
                 $('#modal-notif #modal-title-incoming').text("No item found.")
                 modal_notif.show()
             }
@@ -229,19 +229,9 @@ $(document).ready(function(){
             formData.append('item_id', click_itemId); // set globally from edit button
         }
 
-        // ✅ Extract key-value specifications
-        const specs = {};
-        $('.spec-row').each(function () {
-            const key = $(this).find('.spec-key').val().trim();
-            const value = $(this).find('.spec-value').val().trim();
-            if (key && value) {
-                specs[key] = value;
-            }
-        });
-
-
-        // ✅ Convert to JSON and append to form data
-        formData.set('item_specs', JSON.stringify(specs));
+        // ✅ Get the value from the textarea directly
+        const rawSpecs = $('#item-specs').val().trim();
+        formData.set('item_specs', rawSpecs); // no JSON conversion needed
 
         $.ajax({
             url: endpoint,
@@ -284,9 +274,8 @@ $(document).ready(function(){
                         `;
                         $('.inventory-div').append(itemHTML);
                     });
-
-                    $('.spec-key').val("")
-                    $('.spec-value').val("")
+                    paginationInstance = pagination(); 
+                    $('#item-specs').val(""); // clear textarea
                 }
 
                 modal_addItem.hide();
@@ -303,6 +292,7 @@ $(document).ready(function(){
             }
         });
     });
+
 
 
 
@@ -348,13 +338,13 @@ $(document).ready(function(){
     $(document).off('click', '.edit-item-btn').on('click', '.edit-item-btn', function () {
         const index = $('.edit-item-btn').index(this);
         const itemID = $('.item-id').eq(index).text().trim();
-        click_itemId = itemID
-        // Set form title
+        click_itemId = itemID;
+
         $('#modal-add-item .modal-title-incoming').text("Edit Item");
 
-        // Fetch item data including image via AJAX
+        // Fetch item data via AJAX
         $.ajax({
-            url: '../php/fetch_singleImage.php', // Replace with your endpoint
+            url: '../php/fetch_singleImage.php',
             method: 'POST',
             data: { item_id: itemID },
             dataType: 'json',
@@ -362,51 +352,26 @@ $(document).ready(function(){
                 if (response.success) {
                     const item = response.data;
 
-                    // Populate fields
-                    $('#item-name').val(item.itemName);
-                    $('#item-price').val(item.itemPrice);
-                    $('#item-specs').val(item.itemSpecs);
-
-                    // Show image preview
-                    if (item.itemImagePath) {
-                        $('#img-preview-display').attr('src', '../' + item.itemImagePath).show();
-                    } else {
-                        $('#img-preview-display').attr('src', '../source/inventory_image/default.jpg').show();
-                    }
-
-                    // Populate fields with original values and store them for comparison
+                    // Populate basic fields
                     $('#item-name').val(item.itemName).attr('data-original', item.itemName);
                     $('#item-price').val(item.itemPrice).attr('data-original', item.itemPrice);
-                    $('.spec-container').empty(); // Make sure your spec rows are inside a wrapper like <div class="spec-container">
-                    
-                    try {
-                        const specs = JSON.parse(item.itemSpecs);
-                        if (typeof specs === 'object' && specs !== null) {
-                            Object.entries(specs).forEach(([key, value]) => {
-                                const specRowHTML = `
-                                    <div class="spec-row d-flex mb-2">
-                                        <input type="text" class="form-control me-2 spec-key" value="${key}" placeholder="Spec Key">
-                                        <input type="text" class="form-control spec-value" value="${value}" placeholder="Spec Value">
-                                        <button type="button" class="btn btn-danger remove-spec">×</button>
-                                    </div>`;
-                                $('.spec-container').append(specRowHTML);
-                            });
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse itemSpecs JSON", e);
-                    }
+                    $('#item-specs').val(item.itemSpecs).attr('data-original', item.itemSpecs); // plain text
 
-                    // Track original image for comparison
+                    // Show image preview
+                    const imageSrc = item.itemImagePath
+                        ? '../' + item.itemImagePath
+                        : '../source/inventory_image/default.jpg';
+
                     $('#img-preview-display')
-                        .attr('src', '../' + item.itemImagePath || '../source/inventory_image/default.jpg')
-                        .attr('data-original', '../' +  item.itemImagePath || '../source/inventory_image/default.jpg');
+                        .attr('src', imageSrc)
+                        .attr('data-original', imageSrc)
+                        .show();
 
-                    $('#add-item-btn').prop('disabled', true);
-                    $('#add-item-btn').css('opacity', 0.5);
+                    // Disable button initially
+                    $('#add-item-btn').prop('disabled', true).css('opacity', 0.5);
 
-
-                    // // Show the modal
-                    $('#add-item-btn').text("EDIT ITEM")
+                    // Set button label and show modal
+                    $('#add-item-btn').text("EDIT ITEM");
                     modal_addItem.show();
                 }
             },
@@ -415,6 +380,7 @@ $(document).ready(function(){
             }
         });
     });
+
 
 
     $(document).off('click', '.delete-item-btn').on('click', '.delete-item-btn', function () {

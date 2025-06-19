@@ -3,7 +3,7 @@
     include('../assets/connection/sqlconnection.php');
 
     $item_data = $_SESSION['fetch_inventory'];
-    // echo "<pre>"; print_r($item_data); echo "</pre>";
+
 ?>
 
 <!DOCTYPE html>
@@ -115,12 +115,12 @@
                         </div>
 
                         <!-- Row 4: Specifications -->
-                        <!-- <div class="form-group mb-3">
+                        <div class="form-group mb-3">
                             <label for="item-specs">Item Specifications <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="item-specs" name="item_specs" rows="5" placeholder="e.g., Processor: Intel i5, RAM: 8GB, Storage: 512GB SSD" required></textarea>
-                        </div> -->
+                        </div>
 
-                        <div id="item-specs-container">
+                        <!-- <div id="item-specs-container">
                             <label class="form-label">Item Specifications <span class="text-danger">*</span></label>
                             
                             <div class="spec-row input-group mb-2">
@@ -128,9 +128,9 @@
                                 <input type="text" class="form-control spec-value" placeholder="e.g., AMD Ryzen 9">
                                 <button type="button" class="btn btn-danger remove-spec">×</button>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="spec-container"></div>
+                        <!-- <div class="spec-container"></div> -->
                         <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-spec">Add Specification</button>
 
                     </form>

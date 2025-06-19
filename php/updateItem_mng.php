@@ -14,12 +14,8 @@
         exit;
     }
 
-    // Handle optional image update
-    if (!empty($itemSpecs) && json_decode($itemSpecs) === null) {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid JSON in item specifications']);
-        exit;
-    }
-    
+    // No need to validate JSON anymore since specs is now plain text
+
     $imageProvided = (isset($_FILES['item_image']) && $_FILES['item_image']['error'] === UPLOAD_ERR_OK);
     if ($imageProvided) {
         $itemImageContent = file_get_contents($_FILES['item_image']['tmp_name']);
@@ -43,10 +39,10 @@
     $fetchStmt = $pdo->query("SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory");
     $item_data = $fetchStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Optional: match truncation logic for display
-    for ($i = 0; $i < count($item_data); $i++) {
-        if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 75) {
-            $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 75) . "...";
+    // Truncate long item names
+    foreach ($item_data as &$item) {
+        if (isset($item['itemName']) && strlen($item['itemName']) > 75) {
+            $item['itemName'] = substr($item['itemName'], 0, 75) . "...";
         }
     }
 
