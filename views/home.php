@@ -14,7 +14,7 @@
         
     // }
 
-    $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath FROM imiss_inventory";
+    $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath, itemCategory FROM imiss_inventory";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -68,6 +68,14 @@
 
         <div class="function-bar">
             <i class="fa-solid fa-bars" id="burger-icon"></i>
+
+            <div class="filter-div">
+                <button class="filter-btn" data-category="All">All Items</button>
+                <button class="filter-btn" data-category="Common">Common Items</button>
+                <button class="filter-btn" data-category="Rare">Uncommon Items</button>
+                <button class="filter-btn" data-category="IMISS">IMISS Items</button>
+            </div>
+
             <div class="search-bar">
                 <input type="text" id="search-input" autocomplete="off"/>
                 <button id="search-btn">Search</button>
@@ -94,7 +102,9 @@
                 // echo "<pre>"; print_r($item['itemSpecs']); echo "</pre>";
                 // echo "<pre>"; print_r($dataSpecs); echo "</pre>";
             ?>
-                <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
+                <!-- <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;"> -->
+                <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" data-category="<?php echo $item['itemCategory']; ?>" style="display: none;">
+
                     <img class="item-img" src="../<?php echo $imageSrc; ?>" 
                         alt="item-<?php echo $item['itemID']; ?>-img">
                     <p class="item-description" title="<?php echo htmlspecialchars($item['itemName_full'], ENT_QUOTES); ?>">

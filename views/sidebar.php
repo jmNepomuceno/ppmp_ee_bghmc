@@ -63,6 +63,16 @@
                     <i class="fa-solid fa-truck"></i>
                     <span>Item Distribution</span>
                 </div>
+
+                <div class="side-bar-routes" id="item-request-sub-div">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>User Item Request</span>
+                </div>
+
+                <div class="side-bar-routes" id="incoming-request-sub-div">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Incoming Item Request</span>
+                </div>
             <?php } ?>
 
         </div>

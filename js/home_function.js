@@ -111,18 +111,24 @@ const checkCurrentCart = () =>{
     });
 }
 
+let activeCategory = "All";
+
 const pagination = () => {
     let currentPage = 1;
 
     function showPage(page) {
-        let items = $(".item-tile").not(".hidden-item"); // Get only visible items
-        totalPages = Math.ceil(items.length / itemsPerPage);
-        
+        let items = activeCategory === "All"
+            ? $(".item-tile").not(".hidden-item")
+            : $(`.item-tile[data-category="${activeCategory}"]`).not(".hidden-item");
+
+        let totalPages = Math.ceil(items.length / itemsPerPage);
+
         $(".item-tile").hide(); // Hide all items
+
         let start = (page - 1) * itemsPerPage;
         let end = start + itemsPerPage;
 
-        items.slice(start, end).show(); // Show only paginated items
+        items.slice(start, end).show(); // Show paginated items
         updatePagination(page, totalPages);
     }
 
@@ -133,12 +139,10 @@ const pagination = () => {
         $("#prevPage").prop("disabled", page === 1);
         $("#nextPage").prop("disabled", page === totalPages);
 
-        // Always show the first page
         if (page > 3) {
             paginationHTML += `<button class="pagination-btn" data-page="1">1</button> ... `;
         }
 
-        // Generate page numbers dynamically
         let startPage = Math.max(1, page - 2);
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
@@ -146,7 +150,6 @@ const pagination = () => {
             paginationHTML += `<button class="pagination-btn ${i === page ? 'active-page' : ''}" data-page="${i}">${i}</button> `;
         }
 
-        // Always show the last page
         if (page < totalPages - 2) {
             paginationHTML += ` ... <button class="pagination-btn" data-page="${totalPages}">${totalPages}</button>`;
         }
@@ -154,10 +157,6 @@ const pagination = () => {
         $("#pagination-numbers").html(paginationHTML);
     }
 
-    // Initial page load
-    showPage(currentPage);
-
-    // Pagination button events
     $("#prevPage").click(() => {
         if (currentPage > 1) {
             currentPage--;
@@ -166,19 +165,19 @@ const pagination = () => {
     });
 
     $("#nextPage").click(() => {
-        let totalPages = Math.ceil($(".item-tile").not(".hidden-item").length / itemsPerPage);
+        let totalPages = Math.ceil((activeCategory === "All" ? $(".item-tile") : $(`.item-tile[data-category="${activeCategory}"]`)).length / itemsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
             showPage(currentPage);
         }
     });
 
-    $(document).on("click", ".pagination-btn", function() {
+    $(document).on("click", ".pagination-btn", function () {
         currentPage = parseInt($(this).attr("data-page"));
         showPage(currentPage);
     });
 
-    return { showPage }; // Return function to use in search
+    return { showPage };
 };
 
 let paginationInstance = pagination();
@@ -186,6 +185,29 @@ let paginationInstance = pagination();
 $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
+
+    // Default load Common items and paginate
+    $('.filter-btn[data-category="All"]').addClass('active-filter');
+    paginationInstance.showPage(1);
+
+    $('.filter-btn').click(function () {
+        const selectedCategory = $(this).data('category');
+        activeCategory = selectedCategory;
+
+        $('.filter-btn').removeClass('active-filter');
+        $(this).addClass('active-filter');
+
+        if (selectedCategory === "All") {
+            $('.item-tile').show(); // show everything
+        } else {
+            $('.item-tile').hide();
+            $(`.item-tile[data-category="${selectedCategory}"]`).show();
+        }
+
+        paginationInstance.showPage(1);
+    });
+
+
     $('.add-btn').click(function(){
         const index = $(this).index('.add-btn'); 
         let current_total = parseInt($('.current-total-span').eq(index).val()) + 1;
@@ -212,7 +234,6 @@ $(document).ready(function(){
 
     // $(document).off('change', '.current-total-span').on('change', '.current-total-span', function() {        
     $(document).on('input', '.current-total-span', function () {
-    
         const index = $('.current-total-span').index(this);
         let value = parseInt($(this).val()) || 0; // Ensure it's a valid number, default to 0
     
@@ -265,7 +286,6 @@ $(document).ready(function(){
             imgElement.src = canvas.toDataURL(); // Replace image with processed version
         };
     }
-      
     
     $('.add-to-cart-btn').click(function(){
         const index = $(this).index('.add-to-cart-btn'); 
@@ -457,7 +477,11 @@ $(document).ready(function(){
     
         if (searchInput !== "") {
             let instance = 0;
-            $('.item-tile').each(function() {
+            const filteredItems = activeCategory === "All"
+                ? $('.item-tile')
+                : $(`.item-tile[data-category="${activeCategory}"]`);
+
+            filteredItems.each(function() {
                 var itemName = $(this).find('.item-description').text().toLowerCase();
     
                 // If the item name includes the search input, show it; otherwise, mark it as hidden
@@ -469,9 +493,9 @@ $(document).ready(function(){
                 }
             });
 
-            if(instance === $('.tiles-div').length){
-                $('#modal-notif #modal-title-incoming').text("No item found.")
-                modal_notif.show()
+            if (instance === filteredItems.length) {
+                $('#modal-notif #modal-title-incoming').text("No item found.");
+                modal_notif.show();
             }
 
         } else {

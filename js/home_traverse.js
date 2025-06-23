@@ -42,6 +42,16 @@ $(document).ready(function(){
     $('#item-distribution-sub-div').click(function(){
         window.location.href = "../views/item_distribution.php";
     });
+    
+
+    $('#item-request-sub-div').click(function(){
+        window.location.href = "../views/item_request.php";
+    });
+
+    $('#incoming-request-sub-div').click(function(){
+        window.location.href = "../views/incoming_request.php";
+    });
+
 
     $('#logout-btn').click(function(){
         modal_logout.show()

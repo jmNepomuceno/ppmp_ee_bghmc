@@ -225,14 +225,53 @@ body .right-container .function-bar{
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
 }
+
+body .right-container .function-bar .filter-div{
+    width: 30%;
+    height: 80%;
+    margin-right:20px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* flex-wrap: wrap; */
+
+    gap:10px;
+    /* 989da3 */
+}
+
+body .right-container .function-bar .filter-div button{
+    font-size: 0.75rem;
+    height: 100%;
+    padding:5px;
+    border-radius: 5px;
+    border:none;
+    background: #a33310;
+    color:white;
+    font-weight: 600;
+    opacity: 0.5;
+    width: 200px;
+}
+
+body .right-container .function-bar .filter-div .filter-btn.active-filter {
+    opacity: 1 !important;
+}
+
+body .right-container .function-bar .filter-div button:hover{
+    opacity: 1;
+    transition: 0.5s ease;
+}
+
 
 body .right-container .function-bar #burger-icon{
     display: none;
 }
 
 body .right-container .function-bar .search-bar{
-    width: 70%;
+    width: 35%;
     height: 100%;
     margin-left: 10px;
 
@@ -244,7 +283,7 @@ body .right-container .function-bar .search-bar{
 }
 
 body .right-container .function-bar .search-bar input{
-    width: 93%;
+    width: 85%;
     height: 100%;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
@@ -256,7 +295,7 @@ body .right-container .function-bar .search-bar input{
 }
 
 body .right-container .function-bar .search-bar button{
-    width: 7%;
+    width: 15%;
     height: 100%;
     border:none;
     border-top-right-radius: 5px;

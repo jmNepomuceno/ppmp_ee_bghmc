@@ -1,0 +1,6 @@
+Array
+(
+    [product_name] => Tablet
+    [product_link] => https://shopee.ph/Apple-Ipad-11th-Gen-A16-(Wifi)-i.1275798143.27731669814?sp_atk=830ae407-4ee3-4235-9eca-9c2888cae74b&xptdk=830ae407-4ee3-4235-9eca-9c2888cae74b
+    [request_reason] => asdfasdf
+)
