@@ -304,7 +304,7 @@ $(document).ready(function(){
         $('#img-preview-display').css('display' , 'none')
     });
 
-    $('#add-item-form input, #add-item-form textarea').on('input change', function () {
+    $('#add-item-form input, #add-item-form textarea, #add-item-form select').on('input change', function () {
         checkIfFormChanged();
     });
 
@@ -315,7 +315,7 @@ $(document).ready(function(){
     function checkIfFormChanged() {
         let changed = false;
 
-        $('#add-item-form input[type="text"], #add-item-form input[type="number"], #add-item-form textarea').each(function () {
+        $('#add-item-form input[type="text"], #add-item-form input[type="number"], #add-item-form textarea, #add-item-form select').each(function () {
             const original = $(this).attr('data-original');
             const current = $(this).val();
             if (original !== current) {
@@ -351,11 +351,12 @@ $(document).ready(function(){
             success: function (response) {
                 if (response.success) {
                     const item = response.data;
-
+                    console.log(item);
                     // Populate basic fields
                     $('#item-name').val(item.itemName).attr('data-original', item.itemName);
                     $('#item-price').val(item.itemPrice).attr('data-original', item.itemPrice);
                     $('#item-specs').val(item.itemSpecs).attr('data-original', item.itemSpecs); // plain text
+                    $('#item-unit').val(item.itemUnit).attr('data-original', item.itemUnit);
 
                     // Show image preview
                     const imageSrc = item.itemImagePath

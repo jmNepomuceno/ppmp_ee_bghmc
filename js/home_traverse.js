@@ -1,3 +1,10 @@
+let totalScreenWidth = screen.width;
+let totalScreenHeight = screen.height;
+
+console.log("Total Screen Width: " + totalScreenWidth + ", Total Screen Height: " + totalScreenHeight);
+//1920 / 1080
+
+
 const side_bar_border_style = (view) =>{
     for(let i = 0; i < $('.side-bar-routes').length; i++){
         $('.side-bar-routes').eq(i).css('background', '#BA3912');
@@ -83,6 +90,7 @@ $(document).ready(function(){
     $(document).on('click', '.view-specs-btn', function () {
         const itemName = $(this).data('item-name');
         const itemPrice = $(this).data('item-price');
+        const itemUnit = $(this).data('item-unit');
         const itemImage = $(this).data('item-image');
         const specs = $(this).data('item-specs');
 
@@ -90,23 +98,9 @@ $(document).ready(function(){
 
         $('#specs-item-name').text(itemName);
         $('#specs-item-price').text("P " + itemPrice);
+        $('#specs-item-unit').text(itemUnit);
         $('#specs-item-img').attr('src', itemImage);
-
-        let specsHtml = '';
-
-        try {
-            if (specs && typeof specs === 'object') {
-                for (const [key, value] of Object.entries(specs)) {
-                    specsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
-                }
-            } else {
-                specsHtml = "<p>No specifications provided.</p>";
-            }
-        } catch (e) {
-            specsHtml = "<p>Invalid specs format.</p>";
-        }
-
-        $('#specs-list').html(specsHtml);
+        $('#specs-list').html(specs);
 
         const modal = new bootstrap.Modal(document.getElementById('specsModal'));
         modal.show();

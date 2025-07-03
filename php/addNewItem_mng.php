@@ -14,15 +14,16 @@ $itemSpecs = $_POST['item_specs'] ?? '';
 $imagePath = 'source/inventory_image/default.jpg';
 
 // Insert item first (with default image path)
-$sql = "INSERT INTO imiss_inventory (itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath)
-        VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO imiss_inventory (itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath, itemUnit)
+        VALUES (?, ?, ?, ?, ?, ?)";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([
     $itemName,
     $itemPrice,
     $itemSpecs,
     $itemVisibility,
-    $imagePath
+    $imagePath,
+    $_POST['item_unit'] ?? 'pc' // Default to 'pcs' if not provided
 ]);
 
 // Get the last inserted itemID

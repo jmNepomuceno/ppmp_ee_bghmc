@@ -120,6 +120,25 @@
                             <textarea class="form-control" id="item-specs" name="item_specs" rows="5" placeholder="e.g., Processor: Intel i5, RAM: 8GB, Storage: 512GB SSD" required></textarea>
                         </div>
 
+                        <!-- Row 5: Unit -->
+                        <div class="form-group mb-3">
+                            <label for="item-unit">Unit <span class="text-danger">*</span></label>
+                            <select class="form-control" id="item-unit" name="item_unit" required>
+                                <option value="" disabled selected>Select Unit</option>
+                                <option value="pc">pc</option>
+                                <option value="set">set</option>
+                                <option value="lot">lot</option>
+                                <option value="pack">pack</option>
+                                <option value="box">box</option>
+                                <option value="roll">roll</option>
+                                <option value="pair">pair</option>
+                                <option value="bottle">bottle</option>
+                                <option value="ream">ream</option>
+                                <option value="can">can</option>
+                            </select>
+                        </div>
+
+
                         <!-- <div id="item-specs-container">
                             <label class="form-label">Item Specifications <span class="text-danger">*</span></label>
                             
@@ -131,7 +150,7 @@
                         </div> -->
 
                         <!-- <div class="spec-container"></div> -->
-                        <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-spec">Add Specification</button>
+                        <!-- <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-spec">Add Specification</button> -->
 
                     </form>
                 </div>

@@ -1,21 +1,17 @@
 <?php
 include('./assets/connection/sqlconnection.php');
 
-$sql = "SELECT itemID, itemImage FROM imiss_inventory";
-$stmt = $pdo->query($sql);
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // $sql = "SELECT itemName FROM imiss_inventory";
+    // $stmt = $pdo->query($sql);
+    // $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-foreach ($items as $item) {
-    $itemID = $item['itemID'];
+    // echo "<pre>"; print_r($items); echo "</pre>";
 
-    if (!empty($item['itemImage'])) {
-        $imagePath = "source/inventory_image/item_{$itemID}.jpg";
-    } else {
-        $imagePath = "source/inventory_image/default.jpg";
-    }
+    $sql = "UPDATE imiss_inventory
+    SET itemCategory = 'IT EQUIPMENTS AND SUPPLIES'
+    WHERE itemCategory NOT IN ('INK & TONER', 'SUBSCRIPTION');";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();   
 
-    $update = $pdo->prepare("UPDATE imiss_inventory SET itemImagePath = ? WHERE itemID = ?");
-    $update->execute([$imagePath, $itemID]);
-}
-echo "✅ Temp path set in itemImagePath column.";
 ?>

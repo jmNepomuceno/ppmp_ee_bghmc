@@ -7,6 +7,7 @@
     $itemName = $_POST['item_name'] ?? '';
     $itemPrice = isset($_POST['item_price']) ? trim($_POST['item_price']) : '';
     $itemSpecs = $_POST['item_specs'] ?? '';
+    $itemUnit = $_POST['item_unit'] ?? '';
 
     // Check if item ID is provided
     if (empty($itemID)) {
@@ -22,17 +23,17 @@
 
         // Update including image
         $sql = "UPDATE imiss_inventory 
-                SET itemName = ?, itemPrice = ?, itemSpecs = ?, itemImage = ?
+                SET itemName = ?, itemPrice = ?, itemSpecs = ?, itemImage = ?, itemUnit = ?
                 WHERE itemID = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$itemName, $itemPrice, $itemSpecs, $itemImageContent, $itemID]);
+        $stmt->execute([$itemName, $itemPrice, $itemSpecs, $itemImageContent, $itemUnit, $itemID]);
     } else {
         // Update without changing image
         $sql = "UPDATE imiss_inventory 
-                SET itemName = ?, itemPrice = ?, itemSpecs = ?
+                SET itemName = ?, itemPrice = ?, itemSpecs = ?, itemUnit = ?
                 WHERE itemID = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$itemName, $itemPrice, $itemSpecs, $itemID]);
+        $stmt->execute([$itemName, $itemPrice, $itemSpecs, $itemUnit, $itemID]);
     }
 
     // ✅ Update session

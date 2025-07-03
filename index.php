@@ -28,7 +28,6 @@
 
 
     <div class="right-container">
-
         <div class="logo-imgs">
             <img src="./source/landing_css/DOH Logo.png" alt="">
             <img src="./source/landing_css/BGHMC logo hi-res.png" alt="">

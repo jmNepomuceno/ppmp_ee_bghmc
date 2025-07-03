@@ -76,9 +76,9 @@
     <div class="modal fade" id="modal-view-request" tabindex="-1" role="dialog" aria-labelledby="modalViewLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header">
                     <h5 class="modal-title" id="modalViewLabel">View Item Request</h5>
-                    <button type="button" class="btn-close close-viewModal-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!-- <button type="button" class="btn-close close-viewModal-btn" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
 
                 <div class="modal-body px-4">

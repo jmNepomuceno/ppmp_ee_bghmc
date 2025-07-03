@@ -186,25 +186,22 @@ $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
 
-    // Default load Common items and paginate
-    $('.filter-btn[data-category="All"]').addClass('active-filter');
+    // Show all items initially
     paginationInstance.showPage(1);
 
-    $('.filter-btn').click(function () {
-        const selectedCategory = $(this).data('category');
+    // Listen to select change instead of button click
+    $('#category-filter').on('change', function () {
+        const selectedCategory = $(this).val();
         activeCategory = selectedCategory;
 
-        $('.filter-btn').removeClass('active-filter');
-        $(this).addClass('active-filter');
-
         if (selectedCategory === "All") {
-            $('.item-tile').show(); // show everything
+            $('.item-tile').show();
         } else {
             $('.item-tile').hide();
             $(`.item-tile[data-category="${selectedCategory}"]`).show();
         }
 
-        paginationInstance.showPage(1);
+        paginationInstance.showPage(1); // reset pagination
     });
 
 

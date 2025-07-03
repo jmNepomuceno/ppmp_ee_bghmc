@@ -14,7 +14,7 @@
         
     // }
 
-    $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath, itemCategory FROM imiss_inventory";
+    $sql = "SELECT itemID, itemName, itemPrice, itemSpecs, itemVisibility, itemImagePath, itemCategory, itemUnit FROM imiss_inventory";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -33,6 +33,21 @@
     }
 
     $_SESSION['fetch_inventory'] = $item_data;
+
+    
+    $sql = "UPDATE imiss_inventory SET itemCategory = 'INK & TONER' WHERE itemCategory = 'Rare'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+        
+    // $sql = "SELECT itemCategory FROM imiss_inventory";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+    // $fdsa = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo "<pre>"; print_r($fdsa); echo "</pre>";
+
+    // $sql = "DELETE FROM imiss_inventory WHERE itemCategory='IMISS'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
 
 <!DOCTYPE html>
@@ -70,10 +85,13 @@
             <i class="fa-solid fa-bars" id="burger-icon"></i>
 
             <div class="filter-div">
-                <button class="filter-btn" data-category="All">All Items</button>
-                <button class="filter-btn" data-category="Common">Common Items</button>
-                <button class="filter-btn" data-category="Rare">Uncommon Items</button>
-                <button class="filter-btn" data-category="IMISS">IMISS Items</button>
+                <select id="category-filter" class="form-select">
+                    <option value="All">All Items</option>
+                    <option value="IT EQUIPMENTS AND SUPPLIES">IT EQUIPMENTS AND SUPPLIES</option>
+                    <option value="INK & TONER">INK & TONER</option>
+                    <option value="SUBSCRIPTION">SUBSCRIPTION</option>
+                    <!-- Add more categories as needed -->
+                </select>
             </div>
 
             <div class="search-bar">
@@ -91,13 +109,11 @@
         <div class="inventory-div">
             <?php for ($i = 0; $i < $total_items; $i++) { 
                 $item = $item_data[$i];
-
+                // echo '<pre>'; print_r($item); echo '</pre>';
                 // Use the stored path from the database
                 $imageSrc = $item['itemImagePath'];
 
-                $dataSpecs = !empty($item['itemSpecs']) 
-                    ? htmlspecialchars(json_encode(json_decode($item['itemSpecs'], true)), ENT_QUOTES)
-                    : htmlspecialchars(json_encode([]), ENT_QUOTES);
+                $dataSpecs =$item['itemSpecs'];
 
                 // echo "<pre>"; print_r($item['itemSpecs']); echo "</pre>";
                 // echo "<pre>"; print_r($dataSpecs); echo "</pre>";
@@ -121,7 +137,8 @@
                         data-item-name="<?php echo htmlspecialchars($item['itemName'], ENT_QUOTES); ?>"
                         data-item-price="<?php echo number_format($item['itemPrice'], 2); ?>"
                         data-item-image="../<?php echo $imageSrc; ?>"
-                        data-item-specs="<?php echo $dataSpecs; ?>"';
+                        data-item-specs="<?php echo $dataSpecs; ?>"
+                        data-item-unit="<?php echo $item['itemUnit']; ?>"
                     >
                         View Specs
                     </span>
@@ -222,6 +239,7 @@
 
                     <h5 id="specs-item-name" style="font-weight:600; font-size:1.5rem;"></h5>
                     <p><strong>Price:</strong> <span id="specs-item-price"></span></p>
+                    <p><strong>Unit:</strong> <span id="specs-item-unit"></span></p>
 
                     <hr>
                     <div id="specs-list">
